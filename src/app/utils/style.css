@@ -1,0 +1,103 @@
+/* 全局样式 */
+body {
+    font-family: 'Microsoft YaHei', sans-serif;
+    background-color: #f0f2f5;
+}
+
+/* 标题样式 */
+h1, h2, h3, h4, h5, h6 {
+    color: #333;
+    font-weight: 600;
+}
+
+/* 按钮样式 */
+.stButton > button {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 8px 16px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.stButton > button:hover {
+    background-color: #45a049;
+}
+
+/* 输入框样式 */
+.stTextInput > div > div > input {
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 8px 12px;
+    font-size: 14px;
+}
+
+.stTextArea > div > div > textarea {
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 8px 12px;
+    font-size: 14px;
+    resize: vertical;
+}
+
+/* 选择框样式 */
+.stSelectbox > div > div > select {
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 8px 12px;
+    font-size: 14px;
+}
+
+/* 卡片样式 */
+.stExpander {
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    margin-bottom: 10px;
+}
+
+/* 侧边栏样式 */
+.sidebar-content {
+    background-color: #f8f9fa;
+    padding: 20px;
+    border-radius: 4px;
+}
+
+/* 无障碍样式 */
+@media (prefers-contrast: high) {
+    body {
+        background-color: #000;
+        color: #fff;
+    }
+    
+    h1, h2, h3, h4, h5, h6 {
+        color: #fff;
+    }
+    
+    .stButton > button {
+        background-color: #fff;
+        color: #000;
+    }
+    
+    .stTextInput > div > div > input,
+    .stTextArea > div > div > textarea,
+    .stSelectbox > div > div > select {
+        border: 2px solid #fff;
+        background-color: #333;
+        color: #fff;
+    }
+}
+
+/* 响应式样式 */
+@media (max-width: 768px) {
+    .stColumns {
+        flex-direction: column;
+    }
+    
+    .stColumn {
+        width: 100% !important;
+        margin-bottom: 20px;
+    }
+}
