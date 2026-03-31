@@ -1,0 +1,42 @@
+[build-system]
+requires = ["setuptools>=42", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ai-job-helper"
+version = "0.1.0"
+description = "AI助残求职辅助工具 - 专为残障人士设计的求职辅助应用"
+authors = [
+    { name = "Your Name", email = "your.email@example.com" }
+]
+license = { file = "LICENSE" }
+readme = "README.md"
+homepage = "https://github.com/lijinbo-max/-------2-"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Topic :: Utilities",
+    "Intended Audience :: End Users/Desktop",
+]
+requires-python = ">=3.8"
+dependencies = [
+    "streamlit",
+    "sqlalchemy",
+    "python-dotenv",
+    "passlib[bcrypt]",
+    "pandas",
+    "numpy",
+    "requests",
+    "pyyaml",
+    "alembic"
+]
+
+[project.scripts]
+ai-job-helper = "ai_job_helper.main:main"
+
+[tool.setuptools.package-dir]
+"" = "src"
+
+[tool.setuptools.packages.find]
+where = ["src"]
