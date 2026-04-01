@@ -1,5 +1,7 @@
 # AI助残求职辅助工具
 
+[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://empowered-by-technology-epkz76rmbhk5ccwflhtxla.streamlit.app/)
+
 ## 项目概述
 
 AI助残求职辅助工具是一款专为残障人士设计的求职辅助应用，旨在帮助残障人士更有效地寻找工作机会，提供平等的就业机会。
