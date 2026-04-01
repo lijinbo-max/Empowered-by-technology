@@ -1,0 +1,29 @@
+# 日志文件
+logs/
+src/logs/
+
+# 虚拟环境
+.venv/
+env/
+
+# 数据库文件
+*.db
+
+# 缓存文件
+__pycache__/
+*.pyc
+
+# 环境变量文件
+.env
+
+# IDE 配置文件
+.vscode/
+.idea/
+
+# 临时文件
+*.tmp
+*.temp
+
+# 操作系统文件
+Thumbs.db
+.DS_Store
