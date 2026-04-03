@@ -1,29 +1,44 @@
-# 日志文件
-logs/
-src/logs/
+# 环境变量文件
+.env
 
-# 虚拟环境
-.venv/
-env/
+# Python文件
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
 
 # 数据库文件
 *.db
 
-# 缓存文件
-__pycache__/
-*.pyc
+# 移动应用构建文件
+mobile_app/build/
+mobile_app/.dart_tool/
+mobile_app/.flutter-plugins
+mobile_app/.flutter-plugins-dependencies
+mobile_app/.packages
+mobile_app/ios/Pods/
+mobile_app/ios/build/
+mobile_app/android/build/
+mobile_app/android/app/build/
 
-# 环境变量文件
-.env
-
-# IDE 配置文件
+# 编辑器文件
 .vscode/
 .idea/
-
-# 临时文件
-*.tmp
-*.temp
+*.swp
+*.swo
+*~
 
 # 操作系统文件
-Thumbs.db
 .DS_Store
+Thumbs.db
+
+# 日志文件
+*.log
+logs/
+
+# 测试文件
+coverage/
+.pytest_cache/
+
+# 其他
+api_stats.json

@@ -463,23 +463,23 @@ st.markdown(
         }}
         
         /* 语音导航和文本到语音功能 */
-        .voice-navigation-indicator {
-            position: fixed;
-            bottom: 60px;
-            right: 10px;
-            background: #4CAF50;
-            color: white;
-            padding: 12px;
-            border-radius: 50%;
-            cursor: pointer;
-            z-index: 1000;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-            transition: all 0.3s ease;
-        }
+        .voice-navigation-indicator {{ 
+            position: fixed; 
+            bottom: 60px; 
+            right: 10px; 
+            background: #4CAF50; 
+            color: white; 
+            padding: 12px; 
+            border-radius: 50%; 
+            cursor: pointer; 
+            z-index: 1000; 
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2); 
+            transition: all 0.3s ease; 
+        }}
         
-        .voice-navigation-indicator:hover {
-            transform: scale(1.1);
-        }
+        .voice-navigation-indicator:hover {{ 
+            transform: scale(1.1); 
+        }}
         
         /* 响应式设计 */
         @media (max-width: 768px) {{
@@ -751,7 +751,7 @@ else:
         # 主题切换按钮
         if st.button("🌙" if not st.session_state.dark_mode else "☀️", key="theme_toggle"):
             st.session_state.dark_mode = not st.session_state.dark_mode
-            st.experimental_rerun()
+            st.rerun()
         
         col1, col2, col3 = st.columns(3)
         
@@ -819,7 +819,11 @@ else:
         session = get_session()
         try:
             user = session.query(User).filter_by(email=username).first()
-            user_id = user.id
+            if user:
+                user_id = user.id
+            else:
+                st.error("用户不存在，请重新登录")
+                st.stop()
         finally:
             session.close()
         
@@ -869,9 +873,12 @@ else:
                         session.add(personal_info)
                     # 更新用户姓名
                     user = session.query(User).filter_by(id=user_id).first()
-                    user.name = name
-                    session.commit()
-                    st.success("个人信息保存成功！")
+                    if user:
+                        user.name = name
+                        session.commit()
+                        st.success("个人信息保存成功！")
+                    else:
+                        st.error("用户不存在，请重新登录")
                 finally:
                     session.close()
         
@@ -1288,7 +1295,11 @@ else:
         session = get_session()
         try:
             user = session.query(User).filter_by(email=username).first()
-            user_id = user.id
+            if user:
+                user_id = user.id
+            else:
+                st.error("用户不存在，请重新登录")
+                st.stop()
         finally:
             session.close()
         
@@ -1636,6 +1647,18 @@ else:
     elif page == "第三方服务":
         st.header("第三方服务集成")
         
+        # 获取用户ID
+        session = get_session()
+        try:
+            user = session.query(User).filter_by(email=username).first()
+            if user:
+                user_id = user.id
+            else:
+                st.error("用户不存在，请重新登录")
+                st.stop()
+        finally:
+            session.close()
+        
         # 记录功能使用
         record_feature_usage(user_id, "第三方服务")
         
@@ -1707,7 +1730,7 @@ else:
                                 success, message = remove_integration(user_id, integration['platform'])
                                 if success:
                                     st.success(message)
-                                    st.experimental_rerun()
+                                    st.rerun()
                                 else:
                                     st.error(message)
                 else:
@@ -1851,7 +1874,7 @@ else:
                             )
                             if success:
                                 st.success(message)
-                                st.experimental_rerun()
+                                st.rerun()
                             else:
                                 st.error(message)
                         
@@ -1864,6 +1887,18 @@ else:
     # 企业版页面
     elif page == "企业版":
         st.header("企业版功能")
+        
+        # 获取用户ID
+        session = get_session()
+        try:
+            user = session.query(User).filter_by(email=username).first()
+            if user:
+                user_id = user.id
+            else:
+                st.error("用户不存在，请重新登录")
+                st.stop()
+        finally:
+            session.close()
         
         # 记录功能使用
         record_feature_usage(user_id, "企业版")
@@ -1948,7 +1983,7 @@ else:
                                     success, message = remove_user_from_company(company_id, user['user_id'])
                                     if success:
                                         st.success(message)
-                                        st.experimental_rerun()
+                                        st.rerun()
                                     else:
                                         st.error(message)
                             st.write("---")
@@ -2122,6 +2157,18 @@ else:
     elif page == "用户反馈":
         st.header("用户反馈")
         
+        # 获取用户ID
+        session = get_session()
+        try:
+            user = session.query(User).filter_by(email=username).first()
+            if user:
+                user_id = user.id
+            else:
+                st.error("用户不存在，请重新登录")
+                st.stop()
+        finally:
+            session.close()
+        
         # 记录功能使用
         record_feature_usage(user_id, "用户反馈")
         
@@ -2162,6 +2209,18 @@ else:
     elif page == "社区论坛":
         st.header("社区论坛")
         
+        # 获取用户ID
+        session = get_session()
+        try:
+            user = session.query(User).filter_by(email=username).first()
+            if user:
+                user_id = user.id
+            else:
+                st.error("用户不存在，请重新登录")
+                st.stop()
+        finally:
+            session.close()
+        
         # 记录功能使用
         record_feature_usage(user_id, "社区论坛")
         
@@ -2179,7 +2238,7 @@ else:
                     if success:
                         st.success(message)
                         # 刷新页面
-                        st.experimental_rerun()
+                        st.rerun()
                     else:
                         st.error(message)
                 else:
@@ -2206,7 +2265,7 @@ else:
                             if success:
                                 st.success(message)
                                 # 刷新页面
-                                st.experimental_rerun()
+                                st.rerun()
                             else:
                                 st.error(message)
                         else:
@@ -2337,66 +2396,73 @@ else:
         
         // 创建语音导航指示器
         function createVoiceNavigationIndicator() {
-            const indicator = document.createElement('div');
-            indicator.className = 'voice-navigation-indicator';
-            indicator.textContent = '🎤';
-            indicator.title = '点击开始语音导航';
-            indicator.addEventListener('click', toggleVoiceRecognition);
-            document.body.appendChild(indicator);
+            // 先检查元素是否已存在
+            let indicator = document.querySelector('.voice-navigation-indicator');
+            if (!indicator) {
+                indicator = document.createElement('div');
+                indicator.className = 'voice-navigation-indicator';
+                indicator.textContent = '🎤';
+                indicator.title = '点击开始语音导航';
+                indicator.addEventListener('click', toggleVoiceRecognition);
+                document.body.appendChild(indicator);
+            }
         }
         
         // 语音输入到文本框功能
         function initVoiceInput() {
             const textInputs = document.querySelectorAll('input[type="text"], textarea');
             textInputs.forEach(input => {
-                const voiceButton = document.createElement('button');
-                voiceButton.className = 'voice-input-button';
-                voiceButton.textContent = '🎤';
-                voiceButton.title = '点击开始语音输入';
-                voiceButton.style.position = 'absolute';
-                voiceButton.style.right = '5px';
-                voiceButton.style.top = '50%';
-                voiceButton.style.transform = 'translateY(-50%)';
-                voiceButton.style.background = 'transparent';
-                voiceButton.style.border = 'none';
-                voiceButton.style.cursor = 'pointer';
-                voiceButton.style.fontSize = '16px';
-                
-                const parent = input.parentElement;
-                parent.style.position = 'relative';
-                parent.appendChild(voiceButton);
-                
-                voiceButton.addEventListener('click', function() {
-                    if ('webkitSpeechRecognition' in window) {
-                        const recognition = new webkitSpeechRecognition();
-                        recognition.continuous = false;
-                        recognition.interimResults = false;
-                        recognition.lang = 'zh-CN';
-                        
-                        voiceButton.textContent = '🔊';
-                        voiceButton.style.color = '#f44336';
-                        
-                        recognition.onresult = function(event) {
-                            const transcript = event.results[0][0].transcript;
-                            input.value = transcript;
-                            voiceButton.textContent = '🎤';
-                            voiceButton.style.color = '';
-                        };
-                        
-                        recognition.onerror = function(event) {
-                            console.error('语音识别错误:', event.error);
-                            voiceButton.textContent = '🎤';
-                            voiceButton.style.color = '';
-                        };
-                        
-                        recognition.onend = function() {
-                            voiceButton.textContent = '🎤';
-                            voiceButton.style.color = '';
-                        };
-                        
-                        recognition.start();
-                    }
-                });
+                // 先检查语音按钮是否已存在
+                if (!input.parentElement.querySelector('.voice-input-button')) {
+                    const voiceButton = document.createElement('button');
+                    voiceButton.className = 'voice-input-button';
+                    voiceButton.textContent = '🎤';
+                    voiceButton.title = '点击开始语音输入';
+                    voiceButton.style.position = 'absolute';
+                    voiceButton.style.right = '5px';
+                    voiceButton.style.top = '50%';
+                    voiceButton.style.transform = 'translateY(-50%)';
+                    voiceButton.style.background = 'transparent';
+                    voiceButton.style.border = 'none';
+                    voiceButton.style.cursor = 'pointer';
+                    voiceButton.style.fontSize = '16px';
+                    
+                    const parent = input.parentElement;
+                    parent.style.position = 'relative';
+                    parent.appendChild(voiceButton);
+                    
+                    voiceButton.addEventListener('click', function() {
+                        if ('webkitSpeechRecognition' in window) {
+                            const recognition = new webkitSpeechRecognition();
+                            recognition.continuous = false;
+                            recognition.interimResults = false;
+                            recognition.lang = 'zh-CN';
+                            
+                            voiceButton.textContent = '🔊';
+                            voiceButton.style.color = '#f44336';
+                            
+                            recognition.onresult = function(event) {
+                                const transcript = event.results[0][0].transcript;
+                                input.value = transcript;
+                                voiceButton.textContent = '🎤';
+                                voiceButton.style.color = '';
+                            };
+                            
+                            recognition.onerror = function(event) {
+                                console.error('语音识别错误:', event.error);
+                                voiceButton.textContent = '🎤';
+                                voiceButton.style.color = '';
+                            };
+                            
+                            recognition.onend = function() {
+                                voiceButton.textContent = '🎤';
+                                voiceButton.style.color = '';
+                            };
+                            
+                            recognition.start();
+                        }
+                    });
+                }
             });
         }
         
@@ -2406,21 +2472,24 @@ else:
             console.log('眼动追踪功能已启用');
             
             // 创建眼动追踪状态指示器
-            const eyeTrackingIndicator = document.createElement('div');
-            eyeTrackingIndicator.className = 'eye-tracking-indicator';
-            eyeTrackingIndicator.textContent = '👁️';
-            eyeTrackingIndicator.title = '眼动追踪已启用';
-            eyeTrackingIndicator.style.position = 'fixed';
-            eyeTrackingIndicator.style.bottom = '120px';
-            eyeTrackingIndicator.style.right = '10px';
-            eyeTrackingIndicator.style.background = '#2196F3';
-            eyeTrackingIndicator.style.color = 'white';
-            eyeTrackingIndicator.style.padding = '10px';
-            eyeTrackingIndicator.style.borderRadius = '50%';
-            eyeTrackingIndicator.style.zIndex = '1000';
-            eyeTrackingIndicator.style.boxShadow = '0 2px 5px rgba(0,0,0,0.2);'
-            
-            document.body.appendChild(eyeTrackingIndicator);
+            let eyeTrackingIndicator = document.querySelector('.eye-tracking-indicator');
+            if (!eyeTrackingIndicator) {
+                eyeTrackingIndicator = document.createElement('div');
+                eyeTrackingIndicator.className = 'eye-tracking-indicator';
+                eyeTrackingIndicator.textContent = '👁️';
+                eyeTrackingIndicator.title = '眼动追踪已启用';
+                eyeTrackingIndicator.style.position = 'fixed';
+                eyeTrackingIndicator.style.bottom = '120px';
+                eyeTrackingIndicator.style.right = '10px';
+                eyeTrackingIndicator.style.background = '#2196F3';
+                eyeTrackingIndicator.style.color = 'white';
+                eyeTrackingIndicator.style.padding = '10px';
+                eyeTrackingIndicator.style.borderRadius = '50%';
+                eyeTrackingIndicator.style.zIndex = '1000';
+                eyeTrackingIndicator.style.boxShadow = '0 2px 5px rgba(0,0,0,0.2)';
+                
+                document.body.appendChild(eyeTrackingIndicator);
+            }
         }
         
         // 初始化功能
@@ -2430,6 +2499,18 @@ else:
             initTextToSpeech();
             initVoiceInput();
             initEyeTracking();
+        });
+        
+        // 当页面重新渲染时，确保元素被正确处理
+        window.addEventListener('streamlit:rerun', function() {
+            // 重新初始化所有功能
+            setTimeout(function() {
+                initVoiceRecognition();
+                createVoiceNavigationIndicator();
+                initTextToSpeech();
+                initVoiceInput();
+                initEyeTracking();
+            }, 100);
         });
         </script>
         """, unsafe_allow_html=True)
