@@ -8,3 +8,4 @@ requests
 pyyaml
 alembic
 streamlit-authenticator
+PyPDF2
