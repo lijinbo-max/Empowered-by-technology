@@ -32,6 +32,11 @@
 - 在 "Secrets" 部分，添加以下环境变量：
   ```
   GLM4_API_KEY=your-actual-api-key-here
+  # 数据库配置 (可选，默认使用SQLite)
+  # SQLite (默认，无需额外配置)
+  # DATABASE_URL=sqlite:///job_helper.db
+  # 或使用PostgreSQL (需要提供完整连接字符串)
+  # DATABASE_URL=postgresql://username:password@hostname:5432/database_name
   ```
 - 点击 "Save"
 

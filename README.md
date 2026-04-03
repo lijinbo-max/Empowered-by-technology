@@ -411,6 +411,8 @@ GLM4_API_KEY=your_glm4_api_key_here
 DATABASE_URL=sqlite:///job_helper.db
 # 或使用PostgreSQL
 # DATABASE_URL=postgresql://user:password@localhost:5432/job_helper
+# 或使用远程PostgreSQL
+# DATABASE_URL=postgresql://username:password@hostname:5432/database_name
 
 # 应用配置
 ENVIRONMENT=development

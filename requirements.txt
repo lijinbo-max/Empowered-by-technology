@@ -11,3 +11,4 @@ streamlit-authenticator
 PyPDF2
 python-docx
 zai-sdk
+psycopg2-binary
