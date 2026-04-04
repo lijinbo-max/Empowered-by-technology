@@ -1,5 +1,5 @@
-# 构建阶段
-FROM python:3.9-slim AS builder
+# 构建阶段 - 支持多架构
+FROM --platform=$BUILDPLATFORM python:3.9-slim AS builder
 
 WORKDIR /app
 
@@ -19,8 +19,9 @@ FROM python:3.9-slim AS runtime
 
 # 设置标签
 LABEL maintainer="AI Job Helper Team"
-LABEL version="1.0"
-LABEL description="AI助残求职辅助工具"
+LABEL version="2.0"
+LABEL description="AI助残求职辅助工具 - 支持多架构（AMD64/ARM64）"
+LABEL architecture="multi-arch"
 
 # 创建非root用户
 RUN useradd -m -u 1000 appuser

@@ -1,0 +1,148 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ai-job-helper
+  namespace: ai-job-helper
+  labels:
+    app: ai-job-helper
+    tier: frontend
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: ai-job-helper
+  template:
+    metadata:
+      labels:
+        app: ai-job-helper
+        tier: frontend
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8501"
+        prometheus.io/path: "/metrics"
+    spec:
+      containers:
+      - name: app
+        image: ai-job-helper:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8501
+          name: http
+        env:
+        - name: ENVIRONMENT
+          valueFrom:
+            configMapKeyRef:
+              name: ai-job-helper-config
+              key: ENVIRONMENT
+        - name: DEBUG
+          valueFrom:
+            configMapKeyRef:
+              name: ai-job-helper-config
+              key: DEBUG
+        - name: GLM4_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: ai-job-helper-secret
+              key: GLM4_API_KEY
+        - name: DATABASE_URL
+          valueFrom:
+            secretKeyRef:
+              name: ai-job-helper-secret
+              key: DATABASE_URL
+        - name: REDIS_URL
+          valueFrom:
+            secretKeyRef:
+              name: ai-job-helper-secret
+              key: REDIS_URL
+        - name: MINIO_ENDPOINT
+          valueFrom:
+            configMapKeyRef:
+              name: ai-job-helper-config
+              key: MINIO_ENDPOINT
+        - name: MINIO_ACCESS_KEY
+          valueFrom:
+            secretKeyRef:
+              name: ai-job-helper-secret
+              key: MINIO_ACCESS_KEY
+        - name: MINIO_SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              name: ai-job-helper-secret
+              key: MINIO_SECRET_KEY
+        - name: MINIO_BUCKET
+          valueFrom:
+            configMapKeyRef:
+              name: ai-job-helper-config
+              key: MINIO_BUCKET
+        resources:
+          limits:
+            cpu: "1"
+            memory: "1Gi"
+          requests:
+            cpu: "0.5"
+            memory: "512Mi"
+        livenessProbe:
+          httpGet:
+            path: /_stcore/health
+            port: 8501
+          initialDelaySeconds: 60
+          periodSeconds: 30
+          timeoutSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /_stcore/health
+            port: 8501
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+      initContainers:
+      - name: wait-for-mysql
+        image: busybox:1.28
+        command: ['sh', '-c', 'until nc -z mysql-service 3306; do echo waiting for mysql; sleep 2; done;']
+      - name: wait-for-redis
+        image: busybox:1.28
+        command: ['sh', '-c', 'until nc -z redis-service 6379; do echo waiting for redis; sleep 2; done;']
+      - name: wait-for-minio
+        image: busybox:1.28
+        command: ['sh', '-c', 'until nc -z minio-service 9000; do echo waiting for minio; sleep 2; done;']
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ai-job-helper-service
+  namespace: ai-job-helper
+  labels:
+    app: ai-job-helper
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 80
+    targetPort: 8501
+    name: http
+  selector:
+    app: ai-job-helper
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ai-job-helper-ingress
+  namespace: ai-job-helper
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+spec:
+  tls:
+  - hosts:
+    - ai-job-helper.example.com
+    secretName: ai-job-helper-tls
+  rules:
+  - host: ai-job-helper.example.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: ai-job-helper-service
+            port:
+              number: 80

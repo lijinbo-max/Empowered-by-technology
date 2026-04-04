@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: ai-job-helper
+  labels:
+    name: ai-job-helper
+    environment: production
+    app: ai-job-helper
