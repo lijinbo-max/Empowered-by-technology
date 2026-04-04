@@ -1,38 +1,144 @@
-version: '3'
+version: '3.8'
 
-# 基础配置
+# 网络配置
+networks:
+  app-network:
+    driver: bridge
+    ipam:
+      driver: default
+
+# 数据卷配置
+volumes:
+  postgres_data:
+    driver: local
+  app_data:
+    driver: local
+
+# 服务配置
 services:
+  # 应用服务
   app:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: runtime
+    container_name: ai-job-helper
     ports:
       - "8501:8501"
     volumes:
-      - .:/app
+      - app_data:/app/data
     environment:
       - GLM4_API_KEY=${GLM4_API_KEY}
+      - DATABASE_URL=postgresql://job_helper:password@db:5432/job_helper
+      - ENVIRONMENT=production
+    networks:
+      - app-network
+    depends_on:
+      db:
+        condition: service_healthy
     restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 1G
+        reservations:
+          cpus: '0.5'
+          memory: 512M
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8501/_stcore/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
 
-# 开发环境
-development:
-  extends:
-    service: app
-  environment:
-    - ENVIRONMENT=development
-    - DEBUG=True
+  # PostgreSQL数据库服务
+  db:
+    image: postgres:13-alpine
+    container_name: ai-job-helper-db
+    environment:
+      - POSTGRES_DB=job_helper
+      - POSTGRES_USER=job_helper
+      - POSTGRES_PASSWORD=password
+      - PGDATA=/var/lib/postgresql/data/pgdata
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - app-network
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+        reservations:
+          cpus: '0.25'
+          memory: 256M
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U job_helper"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
-# 测试环境
-test:
-  extends:
-    service: app
-  environment:
-    - ENVIRONMENT=test
-    - DEBUG=False
+  # 开发环境
+  development:
+    extends:
+      service: app
+    container_name: ai-job-helper-dev
+    environment:
+      - ENVIRONMENT=development
+      - DEBUG=True
+      - DATABASE_URL=sqlite:///job_helper.db
+    volumes:
+      - .:/app
+      - app_data:/app/data
+    ports:
+      - "8502:8501"
+    profiles:
+      - development
 
-# 生产环境
-production:
-  extends:
-    service: app
-  environment:
-    - ENVIRONMENT=production
-    - DEBUG=False
-  restart: always
+  # 测试环境
+  test:
+    extends:
+      service: app
+    container_name: ai-job-helper-test
+    environment:
+      - ENVIRONMENT=test
+      - DEBUG=False
+      - DATABASE_URL=sqlite:///test_job_helper.db
+    volumes:
+      - .:/app
+    ports:
+      - "8503:8501"
+    profiles:
+      - test
+
+  # 生产环境
+  production:
+    extends:
+      service: app
+    container_name: ai-job-helper-prod
+    environment:
+      - ENVIRONMENT=production
+      - DEBUG=False
+    restart: always
+    deploy:
+      resources:
+        limits:
+          cpus: '2.0'
+          memory: 2G
+        reservations:
+          cpus: '1.0'
+          memory: 1G
+    profiles:
+      - production
